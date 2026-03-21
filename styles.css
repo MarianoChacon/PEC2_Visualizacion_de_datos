@@ -1,0 +1,11 @@
+.chart {
+    width: 100%;
+    min-height: 400px;
+    border: 2px solid black;
+    border-radius: 5%;
+}
+
+.jumbotron{
+    background-color: #BFD7B5;
+    border: 2px solid black;
+}
