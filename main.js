@@ -1,20 +1,102 @@
-const getOptionChart1=()=>{
-// el objeto que se pone en el return se puede copiar de los ejemplo de la pag de apache ECharts
+const getOptionChart1 = (myChart) => {
+  // 1. Datos originales (puedes cambiarlos por los tuyos)
+  const rawData = [
+    [3384248,1260348,2337638,1712042,239428],
+    [980318,363199,2337638,502407,64461],
+    [1807398,617132,994800,1727701,133853]
+  ];
+
+  // 2. Cálculos de totales para porcentajes
+  const totalData = [];
+  for (let i = 0; i < rawData[0].length; ++i) {
+    let sum = 0;
+    for (let j = 0; j < rawData.length; ++j) {
+      sum += rawData[j][i];
+    }
+    totalData.push(sum);
+  }
+
+  // 3. Configuración del Grid y Dimensiones
+  const grid = { left: 100, right: 100, top: 50, bottom: 50 };
+  
+  // IMPORTANTE: Usamos la instancia myChart pasada por parámetro
+  const gridWidth = myChart.getWidth() - grid.left - grid.right;
+  const gridHeight = myChart.getHeight() - grid.top - grid.bottom;
+  const categoryWidth = gridWidth / rawData[0].length;
+  const barWidth = categoryWidth * 0.6;
+  const barPadding = (categoryWidth - barWidth) / 2;
+
+  // 4. Preparación de las Series (Barras)
+  const series = ['Consumption','Capital formation','Exports'].map((name, sid) => {
     return {
-        xAxis: {
-            type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-            data: [150, 230, 224, 218, 135, 147, 260],
-            type: 'line'
-            }
-        ]
-        };
+      name,
+      type: 'bar',
+      stack: 'total',
+      barWidth: '60%',
+      label: {
+        show: true,
+        formatter: (params) => Math.round(params.value * 100) + '%'
+      },
+      data: rawData[sid].map((d, did) => totalData[did] <= 0 ? 0 : d / totalData[did])
+    };
+  });
+
+  // 5. Generación de Polígonos (Sombras de conexión)
+  const color = ['#8da0cb', '#fc8d62', '#66c2a5'];
+  const elements = [];
+  for (let j = 1; j < rawData[0].length; ++j) {
+    const leftX = grid.left + categoryWidth * j - barPadding;
+    const rightX = leftX + barPadding * 2;
+    let leftY = grid.top + gridHeight;
+    let rightY = leftY;
+
+    for (let i = 0; i < series.length; ++i) {
+      const leftBarHeight = (rawData[i][j - 1] / totalData[j - 1]) * gridHeight;
+      const rightBarHeight = (rawData[i][j] / totalData[j]) * gridHeight;
+      const points = [
+        [leftX, leftY],
+        [leftX, leftY - leftBarHeight],
+        [rightX, rightY - rightBarHeight],
+        [rightX, rightY],
+        [leftX, leftY]
+      ];
+      leftY -= leftBarHeight;
+      rightY -= rightBarHeight;
+      elements.push({
+        type: 'polygon',
+        shape: { points },
+        style: { fill: color[i], opacity: 0.25 }
+      });
+    }
+  }
+
+  // 6. Retorno del objeto final
+  return {
+    legend: {
+        show: true, 
+        selectedMode: false,
+        orient: 'vertical',
+        right: '10',
+        top: 'center',
+        borderWidth: 1,       
+        borderColor: '#0e0e0e',  
+        padding: 10,          
+        backgroundColor: 'rgba(255,255,255,0.8)'
+     },
+    grid:{
+        left: 80, 
+        right: 160,
+        top: 50,
+        bottom: 50 
+    },
+    yAxis: { type: 'value' },
+    xAxis: {
+      type: 'category',
+      data: ['Germany', 'Spain', 'France', 'Italy', 'Portugal']
+    },
+    series,
+    graphic: { elements }
+  };
 };
 
 const getOptionChart2=()=>{
@@ -82,14 +164,28 @@ const getOptionChart2=()=>{
         };
 };
 
-const initCharts=()=>{
-    const chart1 = echarts.init(document.getElementById("chart1")); // Esto inicializa el gráfico y hay que indicarle el elemento por su Id del html
+const initCharts = () => {
+    // 1. Inicializamos las instancias
+    const chart1 = echarts.init(document.getElementById("chart1"));
     const chart2 = echarts.init(document.getElementById("chart2"));
 
-    chart1.setOption(getOptionChart1()); // son las opciones de configuración del gráfico (consultar en la documentacion de ECharts)
-    chart2.setOption(getOptionChart2()); // creamos las opciones en las funciones de arriba para hacerlo más prolijo
+    // 2. Definimos la función de actualización para que sea responsiva
+    const renderCharts = () => {
+        // Pasamos 'chart1' como parámetro para que calcule bien los anchos
+        chart1.setOption(getOptionChart1(chart1), true); 
+        chart2.setOption(getOptionChart2());
+        
+        chart1.resize();
+        chart2.resize();
+    };
+
+    // 3. Ejecutamos la primera vez
+    renderCharts();
+
+    // 4. Hacemos que sea responsivo
+    window.addEventListener('resize', renderCharts);
 };
 
-window.addEventListener('load', ()=>{
+window.addEventListener('load', () => {
     initCharts();
 });
