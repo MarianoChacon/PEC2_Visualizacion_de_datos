@@ -1,102 +1,133 @@
-const getOptionChart1 = (myChart) => {
-  // 1. Datos originales (puedes cambiarlos por los tuyos)
-  const rawData = [
-    [3384248,1260348,2337638,1712042,239428],
-    [980318,363199,2337638,502407,64461],
-    [1807398,617132,994800,1727701,133853]
-  ];
-
-  // 2. Cálculos de totales para porcentajes
-  const totalData = [];
-  for (let i = 0; i < rawData[0].length; ++i) {
-    let sum = 0;
-    for (let j = 0; j < rawData.length; ++j) {
-      sum += rawData[j][i];
-    }
-    totalData.push(sum);
-  }
-
-  // 3. Configuración del Grid y Dimensiones
-  const grid = { left: 100, right: 100, top: 50, bottom: 50 };
-  
-  // IMPORTANTE: Usamos la instancia myChart pasada por parámetro
-  const gridWidth = myChart.getWidth() - grid.left - grid.right;
-  const gridHeight = myChart.getHeight() - grid.top - grid.bottom;
-  const categoryWidth = gridWidth / rawData[0].length;
-  const barWidth = categoryWidth * 0.6;
-  const barPadding = (categoryWidth - barWidth) / 2;
-
-  // 4. Preparación de las Series (Barras)
-  const series = ['Consumption','Capital formation','Exports'].map((name, sid) => {
-    return {
-      name,
-      type: 'bar',
-      stack: 'total',
-      barWidth: '60%',
-      label: {
-        show: true,
-        formatter: (params) => Math.round(params.value * 100) + '%'
+const getOptionChart1 = () => {
+return {
+    // 1. TÍTULO Y SUBTÍTULO GLOBAL (Opción 2)
+    title: {
+      text: 'Objetivo de Inflación anual - Argentina 2026',
+      subtext: 'Valor aprobado en Ley de Presupuesto', // Aquí tu subtítulo
+      left: '2%',
+      top: '4%', // Lo separa del borde superior
+      textStyle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333'
       },
-      data: rawData[sid].map((d, did) => totalData[did] <= 0 ? 0 : d / totalData[did])
-    };
-  });
-
-  // 5. Generación de Polígonos (Sombras de conexión)
-  const color = ['#8da0cb', '#fc8d62', '#66c2a5'];
-  const elements = [];
-  for (let j = 1; j < rawData[0].length; ++j) {
-    const leftX = grid.left + categoryWidth * j - barPadding;
-    const rightX = leftX + barPadding * 2;
-    let leftY = grid.top + gridHeight;
-    let rightY = leftY;
-
-    for (let i = 0; i < series.length; ++i) {
-      const leftBarHeight = (rawData[i][j - 1] / totalData[j - 1]) * gridHeight;
-      const rightBarHeight = (rawData[i][j] / totalData[j]) * gridHeight;
-      const points = [
-        [leftX, leftY],
-        [leftX, leftY - leftBarHeight],
-        [rightX, rightY - rightBarHeight],
-        [rightX, rightY],
-        [leftX, leftY]
-      ];
-      leftY -= leftBarHeight;
-      rightY -= rightBarHeight;
-      elements.push({
-        type: 'polygon',
-        shape: { points },
-        style: { fill: color[i], opacity: 0.25 }
-      });
+      subtextStyle: {
+        fontSize: 16,
+        color: '#666'
+      }
+    },
+  series: [
+    {
+      type: 'gauge',
+      startAngle: 180,
+      endAngle: 0,
+      center: ['50%', '85%'],
+      radius: '90%',
+      min: 0,
+      max: 0.101,
+      splitNumber: 8,
+      axisLine: {
+        lineStyle: {
+          width: 6,
+          color: [
+            [0.25, '#7CFFB2'],
+            [0.5, '#FDDD60'],
+            [0.75, '#FD9803'],
+            [1, '#FF434C']
+          ]
+        }
+      },
+      pointer: {
+        icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+        length: '12%',
+        width: 20,
+        offsetCenter: [0, '-60%'],
+        itemStyle: {
+          color: 'auto'
+        }
+      },
+      axisTick: {
+        length: 12,
+        lineStyle: {
+          color: 'auto',
+          width: 2
+        }
+      },
+      splitLine: {
+        length: 20,
+        lineStyle: {
+          color: 'auto',
+          width: 5
+        }
+      },
+        axisLabel: {
+          distance: -60, 
+          rotate: function (value) {
+            return value === 0.101 ? 0 : 'tangential'; 
+          },
+          formatter: function (value) {
+            if (value === 0.101) return '{rojo|10.1%}';
+            
+            // Aplicamos los nuevos estilos 'estiloIncumplido' y 'estiloControlado'
+            if (value === 0.088375) return '{estiloIncumplido|Incumplido}'; 
+            if (value === 0.063125) return '{estiloExcedido|Excedido}';
+            if (value === 0.037875) return 'Desviado';
+            if (value === 0.012625) return '{estiloControlado|Controlado}';
+            return '';
+          },
+          rich: {
+            rojo: {
+              color: '#FF434C',
+              fontSize: 16,
+              fontWeight: 'bold',
+              padding: [0, -10, -25, 0] // Aleja el 10.1% hacia la derecha
+            },
+            estiloIncumplido: {
+              fontSize: 12,
+              color: '#464646',
+              padding: [0, -50, 0, 0] 
+            },
+            estiloControlado: {
+              fontSize: 12,
+              color: '#464646',
+              padding: [0, 0, 0, -50]
+            },
+            estiloExcedido: {
+              fontSize: 18,
+              color: '#FD9803',
+              fontWeight: 'bold',
+              padding: [0, 0, 0, 20]
+            }
+          }
+        },
+      title: {
+        offsetCenter: [0, '-10%'],
+        fontSize: 20
+      },
+      detail: {
+        fontSize: 30,
+        offsetCenter: [0, '-35%'],
+        valueAnimation: true,
+        formatter: function (value) {
+          return (value * 100).toFixed(2)+ '%';
+        },
+        color: 'inherit'
+      },
+      data: [
+        {
+          value: 0.0588,
+          name: 'Inflación acumulada'
+        },
+        {
+        value: 0.0588,
+        name: '(Febrero 2026)', // <--- TU TEXTO PEQUEÑO
+        // Este título se posiciona más abajo
+        title: { offsetCenter: [0, '5%'], fontSize: 12 }
+      }
+      ]
     }
-  }
-
-  // 6. Retorno del objeto final
-  return {
-    legend: {
-        show: true, 
-        selectedMode: false,
-        orient: 'vertical',
-        right: '10',
-        top: 'center',
-        borderWidth: 1,       
-        borderColor: '#0e0e0e',  
-        padding: 10,          
-        backgroundColor: 'rgba(255,255,255,0.8)'
-     },
-    grid:{
-        left: 80, 
-        right: 160,
-        top: 50,
-        bottom: 50 
-    },
-    yAxis: { type: 'value' },
-    xAxis: {
-      type: 'category',
-      data: ['Germany', 'Spain', 'France', 'Italy', 'Portugal']
-    },
-    series,
-    graphic: { elements }
-  };
+  ]
+};
 };
 
 const getOptionChart2=()=>{
@@ -166,26 +197,25 @@ const getOptionChart2=()=>{
 
 const initCharts = () => {
     // 1. Inicializamos las instancias
-    const chart1 = echarts.init(document.getElementById("chart1"));
-    const chart2 = echarts.init(document.getElementById("chart2"));
+    const chartDom1 = document.getElementById("chart1");
+    const chartDom2 = document.getElementById("chart2");
 
-    // 2. Definimos la función de actualización para que sea responsiva
-    const renderCharts = () => {
-        // Pasamos 'chart1' como parámetro para que calcule bien los anchos
-        chart1.setOption(getOptionChart1(chart1), true); 
+    // Verificación de seguridad para evitar el error de 'null'
+    if (chartDom1) {
+        const chart1 = echarts.init(chartDom1);
+        chart1.setOption(getOptionChart1());
+        
+        // Hacer que chart1 sea responsivo
+        window.addEventListener('resize', () => chart1.resize());
+    }
+
+    if (chartDom2) {
+        const chart2 = echarts.init(chartDom2);
         chart2.setOption(getOptionChart2());
         
-        chart1.resize();
-        chart2.resize();
-    };
-
-    // 3. Ejecutamos la primera vez
-    renderCharts();
-
-    // 4. Hacemos que sea responsivo
-    window.addEventListener('resize', renderCharts);
+        // Hacer que chart2 sea responsivo
+        window.addEventListener('resize', () => chart2.resize());
+    }
 };
 
-window.addEventListener('load', () => {
-    initCharts();
-});
+window.addEventListener('load', initCharts);
