@@ -1,11 +1,11 @@
 const getOptionChart1 = () => {
 return {
-    // 1. TÍTULO Y SUBTÍTULO GLOBAL (Opción 2)
+    
     title: {
-      text: 'Objetivo de Inflación anual - Argentina 2026',
-      subtext: 'Valor aprobado en Ley de Presupuesto', // Aquí tu subtítulo
+      text: 'Cumplimiento objetivo de Inflación anual - Argentina 2026',
+      subtext: 'Valor aprobado en Ley de Presupuesto',
       left: '2%',
-      top: '4%', // Lo separa del borde superior
+      top: '4%', 
       textStyle: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -66,9 +66,9 @@ return {
             return value === 0.101 ? 0 : 'tangential'; 
           },
           formatter: function (value) {
-            if (value === 0.101) return '{rojo|10.1%}';
+            if (value === 0.101) return '{rojo|Objetivo: 10.1%}';
             
-            // Aplicamos los nuevos estilos 'estiloIncumplido' y 'estiloControlado'
+           
             if (value === 0.088375) return '{estiloIncumplido|Incumplido}'; 
             if (value === 0.063125) return '{estiloExcedido|Excedido}';
             if (value === 0.037875) return 'Desviado';
@@ -80,7 +80,7 @@ return {
               color: '#FF434C',
               fontSize: 16,
               fontWeight: 'bold',
-              padding: [0, -10, -25, 0] // Aleja el 10.1% hacia la derecha
+              padding: [0, -10, -40, 0] 
             },
             estiloIncumplido: {
               fontSize: 12,
@@ -120,8 +120,8 @@ return {
         },
         {
         value: 0.0588,
-        name: '(Febrero 2026)', // <--- TU TEXTO PEQUEÑO
-        // Este título se posiciona más abajo
+        name: '(Febrero 2026)', 
+        
         title: { offsetCenter: [0, '5%'], fontSize: 12 }
       }
       ]

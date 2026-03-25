@@ -49,7 +49,7 @@ for label in ax.get_xticklabels():
         label.set_fontsize(12)
     
 
-ax.tick_params(axis='both', which='both', length=0) # Quitamos las rayitas de los ejes
+ax.tick_params(axis='both', which='both', length=0) 
 ax.yaxis.grid(True, linestyle='--', alpha=0.3, color='gray')
 
 for spine in ['top', 'right', 'left']:
