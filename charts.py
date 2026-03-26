@@ -71,5 +71,5 @@ plt.subplots_adjust(bottom=0.25)
 #fig.set_facecolor('#F5F5DC') 
 ax.set_facecolor('#F0F2F5')
 
-plt.savefig('Stacked_bar.png',dpi=300 )
+plt.savefig('Stacked_bar.png',dpi=300)
 #plt.show()

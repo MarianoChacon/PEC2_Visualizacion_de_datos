@@ -45,7 +45,7 @@ df_gba = df_gba.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_gba = df_gba[~(df_gba['IPC'].str.contains('/') | df_gba['IPC'].str.contains('/'))]
+df_gba = df_gba[~(df_gba['IPC'].str.contains('/') | df_gba['IPC'].str.contains('00:00:00'))]
 df_gba['zona'] = 'GBA'
 
 df_pampeana = df_ipc.loc[df_pampeana_idx:df_no_idx,:]
@@ -61,7 +61,7 @@ df_pampeana = df_pampeana.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_pampeana = df_pampeana[~df_pampeana['IPC'].str.contains('/')]
+df_pampeana = df_pampeana[~(df_pampeana['IPC'].str.contains('/') | df_pampeana['IPC'].str.contains('00:00:00'))]
 df_pampeana['zona'] = 'Pampeana'
 
 
@@ -78,7 +78,7 @@ df_no = df_no.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_no = df_no[~df_no['IPC'].str.contains('/')]
+df_no = df_no[~(df_no['IPC'].str.contains('/') | df_no['IPC'].str.contains('00:00:00'))]
 df_no['zona'] = 'NOA'
 
 
@@ -95,7 +95,7 @@ df_ne = df_ne.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_ne = df_ne[~df_ne['IPC'].str.contains('/')]
+df_ne = df_ne[~(df_ne['IPC'].str.contains('/') | df_ne['IPC'].str.contains('00:00:00'))]
 df_ne['zona'] = 'NEA'
 
 df_cuyo = df_ipc.loc[df_cuyo_idx:df_patagonia_idx,:]
@@ -111,7 +111,7 @@ df_cuyo = df_cuyo.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_cuyo = df_cuyo[~df_cuyo['IPC'].str.contains('/')]
+df_cuyo = df_cuyo[~(df_cuyo['IPC'].str.contains('/') | df_cuyo['IPC'].str.contains('00:00:00'))]
 df_cuyo['zona'] = 'Cuyo'
 
 
@@ -128,7 +128,7 @@ df_patagonia = df_patagonia.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_patagonia = df_patagonia[~df_patagonia['IPC'].str.contains('/')]
+df_patagonia = df_patagonia[~(df_patagonia['IPC'].str.contains('/') | df_patagonia['IPC'].str.contains('00:00:00'))]
 df_patagonia['zona'] = 'Patagonia'
 
 df_ipc.rename(columns={'Total nacional':'Concepto'}, inplace=True)
@@ -140,7 +140,7 @@ df_ipc = df_ipc.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_ipc = df_ipc[~df_ipc['IPC'].str.contains('/')]
+df_ipc = df_ipc[~(df_ipc['IPC'].str.contains('/') | df_ipc['IPC'].str.contains('00:00:00'))]
 df_ipc['zona'] = 'Nacional'
 
 df_total = pd.concat([df_ipc, df_gba, df_pampeana, df_no, df_ne, df_cuyo, df_patagonia], axis=0, ignore_index=True).drop_duplicates()
@@ -206,10 +206,10 @@ ax.annotate('',
 icono_path = "icono_exch.png"
 imagen = plt.imread(icono_path)
 imagebox = OffsetImage(imagen, zoom=0.04)
-ab = AnnotationBbox(imagebox, (5, 15.3), frameon=False)
+ab = AnnotationBbox(imagebox, (5, 14.3), frameon=False)
 ax.add_artist(ab)
 
-plt.suptitle('Cambio en la composición de la inflación Argentina (2017 - 2026)',fontproperties=fuente_bold, fontsize=18, fontweight='bold',horizontalalignment='left',x=0.095,y=0.94)
+plt.suptitle('Cambio en la composición de la inflación Argentina (2017 - 2026)',fontproperties=fuente_bold, fontsize=18, fontweight='bold',horizontalalignment='left',x=0.05,y=0.97)
 ax.set_title('Datos correspondientes al agregado nacional', fontproperties=mi_fuente, fontsize=14, color='gray',loc='left',pad=8)
 ax.annotate('Fuente: INDEC - Argentina.', 
             xy=(1, -0.25), 
@@ -222,4 +222,4 @@ ax.annotate('Fuente: INDEC - Argentina.',
 
 
 fig.tight_layout()
-plt.savefig('Beeswarm_plot.png')
+plt.savefig('Beeswarm_plot_V2.png')
