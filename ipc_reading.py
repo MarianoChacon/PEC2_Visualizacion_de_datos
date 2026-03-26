@@ -16,7 +16,7 @@ df_ipc = pd.read_excel(file_path, sheet_name='Variación mensual IPC Nacional', 
 anotations = df_ipc.iat[2,0]
 
 col_names = df_ipc.iloc[:,2]
-col_names_idx = col_names[~(col_names.isna())].index[0]
+col_names_idx = col_names[~col_names.isna()].index[0]
 
 df_ipc = df_ipc.iloc[col_names_idx:,:]
 df_ipc.reset_index(inplace=True, drop = True)
@@ -45,7 +45,7 @@ df_gba = df_gba.melt(
     var_name='Fecha',
     value_name='IPC'             
 )
-df_gba = df_gba[~df_gba['IPC'].str.contains('/')]
+df_gba = df_gba[~(df_gba['IPC'].str.contains('/') | df_gba['IPC'].str.contains('/'))]
 df_gba['zona'] = 'GBA'
 
 df_pampeana = df_ipc.loc[df_pampeana_idx:df_no_idx,:]
@@ -173,7 +173,7 @@ formato = "%d/%m/%Y"
 df_total_graph['Presidencia'] = df_total_graph['Fecha'].apply(lambda x: 'Macri' if x <= dtm.strptime('09/12/2019',formato) else ('Fernández' if (x > dtm.strptime('09/12/2019',formato)) and (x <= dtm.strptime('10/12/2023',formato)) else 'Milei'))
 
 colores= {'Bienes': "#727475", 'Servicios': "#e74c3c"}
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 8))
 sns.swarmplot(data = df_total_graph, x = 'Año', y = 'IPC', size = 4, hue='Concepto',legend=True,palette=colores)#, hue = df_total['zona'])
 ax.set_ybound(0,31)
 ax.set_xlim(right=9.5)
@@ -222,4 +222,4 @@ ax.annotate('Fuente: INDEC - Argentina.',
 
 
 fig.tight_layout()
-plt.show()
+plt.savefig('Beeswarm_plot.png')

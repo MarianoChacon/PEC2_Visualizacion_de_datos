@@ -78,7 +78,7 @@ return {
           rich: {
             rojo: {
               color: '#FF434C',
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: 'bold',
               padding: [0, -10, -40, 0] 
             },
