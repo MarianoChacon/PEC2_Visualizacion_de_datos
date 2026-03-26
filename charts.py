@@ -14,7 +14,7 @@ fuente_light = fm.FontProperties(fname=r'./fonts/Libre_Franklin/static/LibreFran
 df_gdp = pd.read_csv('Data_GDP.csv', sep=';', decimal=',')
 df_gdp = df_gdp[~(df_gdp.GDP_comonent =='Final consumption expenditure, gross capital formation and exports of goods and services')]
 df_gdp = df_gdp.sort_values(by='GEO (Labels)', ascending=False)
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 8))
 
 consumption = df_gdp.loc[df_gdp['GDP_comonent'] == 'Final consumption expenditure',['Perc']].values.flatten()
 capital = df_gdp.loc[df_gdp['GDP_comonent'] == 'Gross capital formation',['Perc']].values.flatten()
@@ -57,7 +57,7 @@ for spine in ['top', 'right', 'left']:
 leg = ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),ncol=3,prop=mi_fuente, frameon=False)
 
 
-plt.suptitle('Destino del PIB de las principales economías europeas',fontproperties=fuente_bold, fontsize=18, fontweight='bold',horizontalalignment='left',x=0.125,y=0.99)
+plt.suptitle('Destino del PIB de las principales economías europeas',fontproperties=fuente_bold, fontsize=18, fontweight='bold',horizontalalignment='left',x=0.125,y=0.95)
 ax.set_title('Porcentajes calculado en base al PIB en euros corrientes - Año 2025', fontproperties=mi_fuente, fontsize=14, color='gray',loc='left',pad=8)
 ax.annotate('Fuente: Eurostat.', 
             xy=(1, -0.25), 
@@ -67,8 +67,9 @@ ax.annotate('Fuente: Eurostat.',
             fontsize=9, 
             color='gray', 
             fontproperties=fuente_cursiva)
-plt.subplots_adjust(bottom=0.3)
-fig.set_facecolor('#F5F5DC') 
+plt.subplots_adjust(bottom=0.25)
+#fig.set_facecolor('#F5F5DC') 
 ax.set_facecolor('#F0F2F5')
 
-plt.show()
+plt.savefig('Stacked_bar.png',dpi=300 )
+#plt.show()

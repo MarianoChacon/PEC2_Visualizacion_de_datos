@@ -1,6 +1,6 @@
 const getOptionChart1 = () => {
 return {
-    
+    backgroundColor: '#ffffff',
     title: {
       text: 'Cumplimiento objetivo de Inflación anual - Argentina 2026',
       subtext: 'Valor aprobado en Ley de Presupuesto',
